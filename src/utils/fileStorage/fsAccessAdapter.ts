@@ -10,6 +10,7 @@ interface FsFileHandleLike {
   createWritable(): Promise<FsWritableFileStreamLike>
 }
 interface FsDirectoryHandleLike {
+  readonly name: string
   getFileHandle(name: string, options?: { create?: boolean }): Promise<FsFileHandleLike>
 }
 type ShowDirectoryPicker = (options?: { mode?: 'read' | 'readwrite' }) => Promise<FsDirectoryHandleLike>
@@ -25,6 +26,10 @@ export class FsAccessAdapter implements StorageAdapter {
 
   hasDirectory(): boolean {
     return this.dirHandle !== null
+  }
+
+  getDirectoryName(): string | null {
+    return this.dirHandle?.name ?? null
   }
 
   async saveFile(filename: string, blob: Blob): Promise<void> {

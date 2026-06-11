@@ -12,6 +12,10 @@ export class DownloadAdapter implements StorageAdapter {
     return true
   }
 
+  getDirectoryName(): string | null {
+    return null
+  }
+
   async saveFile(filename: string, blob: Blob): Promise<void> {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')

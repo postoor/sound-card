@@ -5,6 +5,7 @@ export interface StorageAdapter {
   readonly supportsDirectoryPicker: boolean
   pickDirectory(): Promise<void>
   hasDirectory(): boolean
+  getDirectoryName(): string | null
   saveFile(filename: string, blob: Blob): Promise<void>
   saveJson(filename: string, data: unknown): Promise<void>
 }
