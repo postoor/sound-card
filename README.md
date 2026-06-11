@@ -1,5 +1,49 @@
-# Vue 3 + TypeScript + Vite
+# 育嬰小幫手
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+幼兒玩具產生器——在瀏覽器中製作可列印的幼兒教具。目前提供兩個工具：
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+- **點讀卡製作器**：製作橫式／直式點讀卡，匯出 PNG 或直接列印
+- **圖片挖空**：把圖片中的區域挖空，產生「主圖（挖空圖）」與「零件（挖出件）」，可列印成配對玩具或當作卡片素材
+
+純前端（Vue 3 + TypeScript + Vite），無後端、無帳號，卡片資料自動儲存在瀏覽器 localStorage。
+
+## 操作說明
+
+### 點讀卡製作器
+
+1. 左側按「+ 新增橫式卡片」或「+ 新增直式卡片」建立卡片，點清單項目可切換編輯對象，卡片名稱可直接點擊修改。
+2. 在卡片編輯區的圖片格：
+   - 「點擊上傳圖片」上傳圖片，或「從素材庫選擇」套用圖片挖空產生的素材
+   - 拖曳圖片調整位置、滾輪或下方滑桿調整縮放
+   - 修改圓圈中的標籤文字
+3. **匯出 PNG**：上方工具列可匯出目前卡片或全部卡片（300 DPI）。
+   - 支援的瀏覽器（Chrome / Edge）：先按「選擇資料夾」挑一個資料夾，卡片會存到 `cards/` 子資料夾，專案檔 `project.json` 存在根目錄
+   - 其他瀏覽器：檔案會逐一下載，檔名以 `cards__` 開頭
+4. **列印卡片**：左側欄按「列印卡片」→ 勾選要列印的卡片（可全選）→ 按「列印」。卡片會自動排版到 A4（含 1mm 裁切間距），多張自動分頁。
+
+### 圖片挖空
+
+1. 切到「圖片挖空」分頁，拖放或點擊上傳圖片。
+2. 用工具建立要挖空的區域：
+   - **矩形／橢圓**：按住拖曳
+   - **多邊形**：逐點點擊，點回起點或雙擊封閉
+   - **筆刷**：直接塗抹（紫色半透明顯示），可調筆刷大小、用**橡皮擦**修正、「清除筆刷遮罩」整個重來
+   - **選取/移動**：點選既有選區拖移，按 Delete 刪除；右側「選區列表」也可點選與刪除
+3. **輸出**（一鍵輸出 PNG，皆含透明度）：
+   - 勾「存入目錄」：存到所選資料夾的 `cutouts/` 子資料夾，檔名 `{原檔名}_hollowed.png`（挖空圖）與 `{原檔名}_piece_N.png`（各挖出件）
+   - 勾「加入卡片素材」：加入素材庫，回點讀卡製作器即可在圖片格「從素材庫選擇」使用（素材庫僅本次工作階段有效，重新整理後清空）
+4. **列印**：
+   - 「列印主圖」：挖空圖等比放大置中印在一頁 A4（四周留 10mm）
+   - 「列印零件」：所有挖出件**以與主圖相同比例**自動排版列印，剪下後可剛好放回主圖洞口
+   - 「列印主圖＋零件」：一次印出以上全部
+
+## 開發
+
+```bash
+npm install
+npm run dev      # 開發伺服器
+npm run build    # 型別檢查 (vue-tsc) + 建置
+npm run preview  # 預覽建置結果
+```
+
+推送到 `master` 會自動透過 GitHub Actions 部署到 GitHub Pages（見 `.github/workflows/deploy.yml`）。
