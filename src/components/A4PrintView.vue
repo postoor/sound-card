@@ -97,7 +97,7 @@ async function exportPages() {
 </script>
 
 <template>
-  <div class="a4-print-view">
+  <div class="a4-print-view print-root">
     <div class="controls no-print">
       <button type="button" :disabled="renderedPages.length === 0" @click="print">列印</button>
       <button type="button" :disabled="renderedPages.length === 0" @click="exportPages">匯出 PNG</button>
@@ -165,30 +165,11 @@ async function exportPages() {
   position: absolute;
   display: block;
 }
-</style>
 
-<style>
+/* Preview gap would offset physical page boundaries when printing. */
 @media print {
-  @page {
-    size: A4;
-    margin: 0;
-  }
-  body * {
-    visibility: hidden;
-  }
-  .a4-page,
-  .a4-page * {
-    visibility: visible;
-  }
-  .a4-page {
-    position: absolute;
-    top: 0;
-    left: 0;
-    box-shadow: none;
-    page-break-after: always;
-  }
-  .no-print {
-    display: none !important;
+  .a4-print-view {
+    gap: 0;
   }
 }
 </style>

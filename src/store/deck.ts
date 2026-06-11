@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
-import { createCard, type Card, type CardType, type ProjectState } from '../types/card'
+import { createCard, type Card, type CardType, type ImageAsset, type ProjectState } from '../types/card'
 
 const STORAGE_KEY = 'soundcard-project-v1'
 
@@ -8,6 +8,8 @@ export const useDeckStore = defineStore('deck', () => {
   const cards = ref<Card[]>([])
   const activeCardId = ref<string | null>(null)
   const selectedForPrint = ref<Set<string>>(new Set())
+  // Session-only material library (e.g. cutout pieces); not persisted to localStorage.
+  const materials = ref<ImageAsset[]>([])
 
   function addCard(type: CardType): Card {
     const count = cards.value.filter((c) => c.type === type).length + 1
@@ -34,6 +36,16 @@ export const useDeckStore = defineStore('deck', () => {
   function togglePrintSelection(id: string) {
     if (selectedForPrint.value.has(id)) selectedForPrint.value.delete(id)
     else selectedForPrint.value.add(id)
+  }
+
+  function addMaterial(asset: Omit<ImageAsset, 'id'>): ImageAsset {
+    const material: ImageAsset = { id: crypto.randomUUID(), ...asset }
+    materials.value.push(material)
+    return material
+  }
+
+  function removeMaterial(id: string) {
+    materials.value = materials.value.filter((m) => m.id !== id)
   }
 
   function toProjectState(): ProjectState {
@@ -84,10 +96,13 @@ export const useDeckStore = defineStore('deck', () => {
     cards,
     activeCardId,
     selectedForPrint,
+    materials,
     addCard,
     removeCard,
     setActiveCard,
     togglePrintSelection,
+    addMaterial,
+    removeMaterial,
     toProjectState,
     loadProject,
   }

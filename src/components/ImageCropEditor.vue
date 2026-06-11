@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import type { ImageSlot, ImageTransform } from '../types/card'
+import type { ImageAsset, ImageSlot, ImageTransform } from '../types/card'
+import { defaultTransform } from '../types/card'
 import { clampTransform, coverScaleMmPerPx } from '../utils/geometry'
+import MaterialPicker from './MaterialPicker.vue'
 
 const props = defineProps<{
   modelValue: ImageSlot
@@ -16,6 +18,7 @@ const emit = defineEmits<{
 
 const fileInput = ref<HTMLInputElement>()
 const dragging = ref(false)
+const showMaterialPicker = ref(false)
 
 const widthPx = computed(() => props.widthMm * props.pxPerMm)
 const heightPx = computed(() => props.heightMm * props.pxPerMm)
@@ -62,6 +65,16 @@ function onFileChange(e: Event) {
   }
   reader.readAsDataURL(file)
   input.value = ''
+}
+
+function onMaterialSelect(asset: ImageAsset) {
+  emit('update:modelValue', {
+    imageDataUrl: asset.dataUrl,
+    naturalWidth: asset.naturalWidth,
+    naturalHeight: asset.naturalHeight,
+    transform: defaultTransform(),
+  })
+  showMaterialPicker.value = false
 }
 
 function updateTransform(transform: ImageTransform) {
@@ -141,10 +154,17 @@ function onZoomInput(e: Event) {
         @input="onZoomInput"
         @pointerdown.stop
       />
-      <button class="replace-btn" type="button" @click="triggerUpload">更換圖片</button>
+      <div class="actions">
+        <button class="replace-btn" type="button" @click="triggerUpload">更換圖片</button>
+        <button class="replace-btn" type="button" @click="showMaterialPicker = true">從素材庫選擇</button>
+      </div>
     </template>
-    <button v-else class="upload-placeholder" type="button" @click="triggerUpload">點擊上傳圖片</button>
+    <div v-else class="upload-placeholder">
+      <button class="placeholder-btn" type="button" @click="triggerUpload">點擊上傳圖片</button>
+      <button class="placeholder-btn" type="button" @click="showMaterialPicker = true">從素材庫選擇</button>
+    </div>
     <input ref="fileInput" class="hidden-input" type="file" accept="image/*" @change="onFileChange" />
+    <MaterialPicker v-model="showMaterialPicker" @select="onMaterialSelect" />
   </div>
 </template>
 
@@ -172,24 +192,45 @@ function onZoomInput(e: Event) {
   height: 100%;
   border: 2px dashed #9ca3af;
   background: transparent;
-  color: #6b7280;
-  font-size: 13px;
-  cursor: pointer;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .upload-placeholder:hover {
   background: #eef2f7;
 }
 
+.placeholder-btn {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #6b7280;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.placeholder-btn:hover {
+  background: #f1f5f9;
+}
+
 .hidden-input {
   display: none;
 }
 
-.replace-btn {
+.actions {
   position: absolute;
   top: 4px;
   right: 4px;
+  display: flex;
+  gap: 4px;
+}
+
+.replace-btn {
   font-size: 11px;
   padding: 2px 6px;
   border-radius: 4px;

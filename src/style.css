@@ -22,3 +22,31 @@ button {
 input {
   font-family: inherit;
 }
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  body * {
+    visibility: hidden;
+  }
+  .a4-page,
+  .a4-page * {
+    visibility: visible;
+  }
+  /* Pin the page container to the document origin; pages themselves stay in
+     normal flow so each 297mm-tall page lines up with a physical sheet. */
+  .print-root {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .a4-page {
+    box-shadow: none;
+    break-after: page;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

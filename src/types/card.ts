@@ -56,6 +56,15 @@ export interface PortraitCard {
 
 export type Card = LandscapeCard | PortraitCard
 
+/** A reusable image (e.g. a cutout piece) that can be applied to any card slot. */
+export interface ImageAsset {
+  id: string
+  name: string
+  dataUrl: string
+  naturalWidth: number
+  naturalHeight: number
+}
+
 export interface ProjectState {
   version: 1
   cards: Card[]

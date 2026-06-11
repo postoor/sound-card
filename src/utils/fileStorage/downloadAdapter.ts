@@ -16,18 +16,20 @@ export class DownloadAdapter implements StorageAdapter {
     return null
   }
 
-  async saveFile(filename: string, blob: Blob): Promise<void> {
+  async saveFile(filename: string, blob: Blob, subdir?: string): Promise<void> {
+    // No real directory to nest into; flatten the subdir into the filename instead.
+    const finalName = subdir ? `${subdir}__${filename}` : filename
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = filename
+    a.download = finalName
     document.body.appendChild(a)
     a.click()
     a.remove()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
 
-  async saveJson(filename: string, data: unknown): Promise<void> {
-    await this.saveFile(filename, new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }))
+  async saveJson(filename: string, data: unknown, subdir?: string): Promise<void> {
+    await this.saveFile(filename, new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), subdir)
   }
 }

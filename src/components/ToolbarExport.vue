@@ -37,7 +37,7 @@ async function exportActiveCard() {
   try {
     status.value = `匯出中...${card.name}.png`
     const blob = await exportCardToPngBlob(card)
-    await adapter.saveFile(`${sanitizeFilename(card.name)}.png`, blob)
+    await adapter.saveFile(`${sanitizeFilename(card.name)}.png`, blob, 'cards')
     status.value = `完成：已匯出 ${card.name}.png`
   } finally {
     isBusy.value = false
@@ -57,7 +57,7 @@ async function saveAll() {
       i++
       status.value = `匯出中...(${i}/${total}) ${card.name}.png`
       const blob = await exportCardToPngBlob(card)
-      await adapter.saveFile(`${sanitizeFilename(card.name)}.png`, blob)
+      await adapter.saveFile(`${sanitizeFilename(card.name)}.png`, blob, 'cards')
     }
     status.value = '匯出中...project.json'
     await adapter.saveJson('project.json', store.toProjectState())

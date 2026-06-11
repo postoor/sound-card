@@ -12,6 +12,7 @@ interface FsFileHandleLike {
 interface FsDirectoryHandleLike {
   readonly name: string
   getFileHandle(name: string, options?: { create?: boolean }): Promise<FsFileHandleLike>
+  getDirectoryHandle(name: string, options?: { create?: boolean }): Promise<FsDirectoryHandleLike>
 }
 type ShowDirectoryPicker = (options?: { mode?: 'read' | 'readwrite' }) => Promise<FsDirectoryHandleLike>
 
@@ -32,15 +33,21 @@ export class FsAccessAdapter implements StorageAdapter {
     return this.dirHandle?.name ?? null
   }
 
-  async saveFile(filename: string, blob: Blob): Promise<void> {
+  private async resolveDir(subdir?: string): Promise<FsDirectoryHandleLike> {
     if (!this.dirHandle) throw new Error('尚未選擇資料夾')
-    const handle = await this.dirHandle.getFileHandle(filename, { create: true })
+    if (!subdir) return this.dirHandle
+    return this.dirHandle.getDirectoryHandle(subdir, { create: true })
+  }
+
+  async saveFile(filename: string, blob: Blob, subdir?: string): Promise<void> {
+    const dir = await this.resolveDir(subdir)
+    const handle = await dir.getFileHandle(filename, { create: true })
     const writable = await handle.createWritable()
     await writable.write(blob)
     await writable.close()
   }
 
-  async saveJson(filename: string, data: unknown): Promise<void> {
-    await this.saveFile(filename, new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }))
+  async saveJson(filename: string, data: unknown, subdir?: string): Promise<void> {
+    await this.saveFile(filename, new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), subdir)
   }
 }
