@@ -2,25 +2,22 @@
 import { ref } from 'vue'
 import CutoutView from './views/CutoutView.vue'
 import EditorView from './views/EditorView.vue'
-import PrintView from './views/PrintView.vue'
 
-const tab = ref<'editor' | 'print' | 'cutout'>('editor')
+const tab = ref<'editor' | 'cutout'>('editor')
 </script>
 
 <template>
   <div class="app">
     <header class="app-header no-print">
-      <h1>點讀卡製作器</h1>
+      <h1>育嬰小幫手</h1>
       <nav class="tabs">
-        <button type="button" :class="{ active: tab === 'editor' }" @click="tab = 'editor'">編輯卡片</button>
+        <button type="button" :class="{ active: tab === 'editor' }" @click="tab = 'editor'">點讀卡製作器</button>
         <button type="button" :class="{ active: tab === 'cutout' }" @click="tab = 'cutout'">圖片挖空</button>
-        <button type="button" :class="{ active: tab === 'print' }" @click="tab = 'print'">列印排版</button>
       </nav>
     </header>
     <div class="app-body">
       <EditorView v-if="tab === 'editor'" />
-      <CutoutView v-else-if="tab === 'cutout'" />
-      <PrintView v-else />
+      <CutoutView v-else />
     </div>
   </div>
 </template>

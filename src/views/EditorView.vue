@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useDeckStore } from '../store/deck'
 import DeckList from '../components/DeckList.vue'
 import CardEditor from '../components/CardEditor.vue'
+import PrintCardsDialog from '../components/PrintCardsDialog.vue'
 import ToolbarExport from '../components/ToolbarExport.vue'
 
 const store = useDeckStore()
 
 const activeCard = computed(() => store.cards.find((c) => c.id === store.activeCardId) ?? null)
+const showPrintDialog = ref(false)
 </script>
 
 <template>
@@ -15,6 +17,7 @@ const activeCard = computed(() => store.cards.find((c) => c.id === store.activeC
     <ToolbarExport />
     <div class="body">
       <aside class="sidebar">
+        <button type="button" class="print-cards-btn" @click="showPrintDialog = true">列印卡片</button>
         <DeckList />
       </aside>
       <main class="main">
@@ -22,6 +25,7 @@ const activeCard = computed(() => store.cards.find((c) => c.id === store.activeC
         <p v-else class="empty">請先在左側新增一張卡片</p>
       </main>
     </div>
+    <PrintCardsDialog v-model="showPrintDialog" />
   </div>
 </template>
 
@@ -46,6 +50,22 @@ const activeCard = computed(() => store.cards.find((c) => c.id === store.activeC
   border-right: 1px solid #e2e8f0;
   background: #f8fafc;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.print-cards-btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.print-cards-btn:hover {
+  background: #f1f5f9;
 }
 
 .main {
