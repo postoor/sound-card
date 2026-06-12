@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import ColoringView from './views/ColoringView.vue'
 import CutoutView from './views/CutoutView.vue'
 import EditorView from './views/EditorView.vue'
 
-const tab = ref<'editor' | 'cutout'>('editor')
+const tab = ref<'editor' | 'cutout' | 'coloring'>('editor')
 </script>
 
 <template>
@@ -13,11 +14,13 @@ const tab = ref<'editor' | 'cutout'>('editor')
       <nav class="tabs">
         <button type="button" :class="{ active: tab === 'editor' }" @click="tab = 'editor'">點讀卡製作器</button>
         <button type="button" :class="{ active: tab === 'cutout' }" @click="tab = 'cutout'">圖片挖空</button>
+        <button type="button" :class="{ active: tab === 'coloring' }" @click="tab = 'coloring'">著色稿</button>
       </nav>
     </header>
     <div class="app-body">
       <EditorView v-if="tab === 'editor'" />
-      <CutoutView v-else />
+      <CutoutView v-else-if="tab === 'cutout'" />
+      <ColoringView v-else />
     </div>
   </div>
 </template>

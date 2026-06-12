@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 sample
+
+# Line-art ML model (large binary; download per README and place locally)
+public/models/
