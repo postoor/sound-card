@@ -47,6 +47,9 @@ input {
     box-shadow: none;
     break-after: page;
   }
+  .a4-page:last-child {
+    break-after: avoid;
+  }
   .no-print {
     display: none !important;
   }
