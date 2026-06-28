@@ -125,17 +125,19 @@ function startPrint() {
     </div>
   </div>
 
-  <div v-if="printPages.length" class="print-pages print-root">
-    <div v-for="(page, i) in printPages" :key="i" class="a4-page">
-      <img
-        v-for="(p, j) in page"
-        :key="j"
-        :src="p.dataUrl"
-        class="placed-card"
-        :style="{ left: `${p.xMm}mm`, top: `${p.yMm}mm`, width: `${p.widthMm}mm`, height: `${p.heightMm}mm` }"
-      />
+  <Teleport to="body">
+    <div v-if="printPages.length" class="print-pages print-root">
+      <div v-for="(page, i) in printPages" :key="i" class="a4-page">
+        <img
+          v-for="(p, j) in page"
+          :key="j"
+          :src="p.dataUrl"
+          class="placed-card"
+          :style="{ left: `${p.xMm}mm`, top: `${p.yMm}mm`, width: `${p.widthMm}mm`, height: `${p.heightMm}mm` }"
+        />
+      </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <style scoped>

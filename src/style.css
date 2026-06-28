@@ -28,15 +28,10 @@ input {
     size: A4;
     margin: 0;
   }
-  body * {
-    visibility: hidden;
+  /* Hide the entire app; print pages are teleported to <body> as siblings of #app */
+  #app {
+    display: none !important;
   }
-  .a4-page,
-  .a4-page * {
-    visibility: visible;
-  }
-  /* Pin the page container to the document origin; pages themselves stay in
-     normal flow so each 297mm-tall page lines up with a physical sheet. */
   .print-root {
     position: absolute;
     top: 0;
@@ -45,12 +40,10 @@ input {
   }
   .a4-page {
     box-shadow: none;
+  }
+  /* Only insert a page break between pages, not after the last one */
+  .a4-page:not(:last-child) {
+    page-break-after: always;
     break-after: page;
-  }
-  .a4-page:last-child {
-    break-after: avoid;
-  }
-  .no-print {
-    display: none !important;
   }
 }

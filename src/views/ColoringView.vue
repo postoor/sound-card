@@ -361,6 +361,8 @@ async function printResult() {
       </main>
     </div>
 
+  </div>
+  <Teleport to="body">
     <div v-if="printPages.length" class="print-pages print-root">
       <div v-for="(page, i) in printPages" :key="i" class="a4-page">
         <img
@@ -372,7 +374,7 @@ async function printResult() {
         />
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <style scoped>
