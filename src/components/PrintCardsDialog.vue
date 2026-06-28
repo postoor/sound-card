@@ -73,9 +73,11 @@ async function printSelected() {
 }
 
 function startPrint() {
+  window.addEventListener('afterprint', () => {
+    printPages.value = []
+    printReady.value = false
+  }, { once: true })
   window.print()
-  printPages.value = []
-  printReady.value = false
 }
 </script>
 
@@ -257,7 +259,8 @@ function startPrint() {
 .print-pages {
   position: fixed;
   top: 0;
-  left: -10000px;
+  left: 0;
+  transform: translateX(-10000px);
 }
 
 .print-pages .a4-page {
@@ -274,9 +277,7 @@ function startPrint() {
 
 @media print {
   .print-pages {
-    position: absolute;
-    top: 0;
-    left: 0;
+    transform: none;
   }
 }
 </style>

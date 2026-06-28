@@ -71,11 +71,15 @@ async function loadFile(file: File) {
   status.value = ''
 }
 
-function onFileChange(e: Event) {
+async function onFileChange(e: Event) {
   const input = e.target as HTMLInputElement
   const file = input.files?.[0]
-  if (file) loadFile(file)
-  input.value = ''
+  if (!file) { input.value = ''; return }
+  try {
+    await loadFile(file)
+  } finally {
+    input.value = ''
+  }
 }
 
 function onDrop(e: DragEvent) {
@@ -235,9 +239,11 @@ async function showPrintPages(pages: PrintPlacement[][]) {
 }
 
 function startPrint() {
+  window.addEventListener('afterprint', () => {
+    printPages.value = []
+    printReady.value = false
+  }, { once: true })
   window.print()
-  printPages.value = []
-  printReady.value = false
 }
 
 async function printResult() {
@@ -548,7 +554,8 @@ async function printResult() {
 .print-pages {
   position: fixed;
   top: 0;
-  left: -10000px;
+  left: 0;
+  transform: translateX(-10000px);
 }
 
 .print-pages .a4-page {
@@ -565,9 +572,7 @@ async function printResult() {
 
 @media print {
   .print-pages {
-    position: absolute;
-    top: 0;
-    left: 0;
+    transform: none;
   }
 }
 </style>

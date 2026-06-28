@@ -49,23 +49,27 @@ function onFileChange(e: Event) {
   const input = e.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
-  const reader = new FileReader()
-  reader.onload = () => {
+  const objectUrl = URL.createObjectURL(file)
+  const img = new Image()
+  img.onload = () => {
     input.value = ''
-    const dataUrl = reader.result as string
-    const img = new Image()
-    img.onload = () => {
-      emit('update:modelValue', {
-        imageDataUrl: dataUrl,
-        naturalWidth: img.naturalWidth,
-        naturalHeight: img.naturalHeight,
-        transform: { scale: 1, offsetX: 0, offsetY: 0 },
-      })
-    }
-    img.src = dataUrl
+    const canvas = document.createElement('canvas')
+    canvas.width = img.naturalWidth
+    canvas.height = img.naturalHeight
+    canvas.getContext('2d')!.drawImage(img, 0, 0)
+    URL.revokeObjectURL(objectUrl)
+    emit('update:modelValue', {
+      imageDataUrl: canvas.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', 0.92),
+      naturalWidth: img.naturalWidth,
+      naturalHeight: img.naturalHeight,
+      transform: { scale: 1, offsetX: 0, offsetY: 0 },
+    })
   }
-  reader.onerror = () => { input.value = '' }
-  reader.readAsDataURL(file)
+  img.onerror = () => {
+    URL.revokeObjectURL(objectUrl)
+    input.value = ''
+  }
+  img.src = objectUrl
 }
 
 function onMaterialSelect(asset: ImageAsset) {

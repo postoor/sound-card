@@ -38,9 +38,7 @@ input {
   /* Pin the page container to the document origin; pages themselves stay in
      normal flow so each 297mm-tall page lines up with a physical sheet. */
   .print-root {
-    position: absolute;
-    top: 0;
-    left: 0;
+    transform: none;
   }
   .a4-page {
     box-shadow: none;
