@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import type { ImageAsset, ImageSlot, ImageTransform } from '../types/card'
 import { defaultTransform } from '../types/card'
 import { clampTransform, coverScaleMmPerPx } from '../utils/geometry'
@@ -51,8 +51,7 @@ function onFileChange(e: Event) {
   if (!file) return
   const objectUrl = URL.createObjectURL(file)
   const img = new Image()
-  img.onload = () => {
-    input.value = ''
+  img.onload = async () => {
     const canvas = document.createElement('canvas')
     canvas.width = img.naturalWidth
     canvas.height = img.naturalHeight
@@ -64,6 +63,8 @@ function onFileChange(e: Event) {
       naturalHeight: img.naturalHeight,
       transform: { scale: 1, offsetX: 0, offsetY: 0 },
     })
+    await nextTick()
+    input.value = ''
   }
   img.onerror = () => {
     URL.revokeObjectURL(objectUrl)

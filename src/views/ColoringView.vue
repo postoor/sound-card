@@ -78,6 +78,7 @@ async function onFileChange(e: Event) {
   try {
     await loadFile(file)
   } finally {
+    await nextTick()
     input.value = ''
   }
 }
