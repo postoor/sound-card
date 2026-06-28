@@ -38,10 +38,12 @@ interface PrintPlacement {
 }
 const printPages = ref<PrintPlacement[][]>([])
 const isBusy = ref(false)
+const printReady = ref(false)
 
 async function printSelected() {
   if (selectedCards.value.length === 0) return
   isBusy.value = true
+  printReady.value = false
   try {
     const pages = layoutCardsOnA4(selectedCards.value)
     const result: PrintPlacement[][] = []
@@ -62,11 +64,18 @@ async function printSelected() {
     }
     printPages.value = result
     await nextTick()
-    window.print()
-    printPages.value = []
+    const imgs = document.querySelectorAll<HTMLImageElement>('.print-pages img')
+    await Promise.all(Array.from(imgs).map((img) => img.decode().catch(() => {})))
+    printReady.value = true
   } finally {
     isBusy.value = false
   }
+}
+
+function startPrint() {
+  window.print()
+  printPages.value = []
+  printReady.value = false
 }
 </script>
 
@@ -94,12 +103,21 @@ async function printSelected() {
       </div>
       <footer class="dialog-footer">
         <button
+          v-if="printReady"
+          type="button"
+          class="print-btn ready"
+          @click="startPrint"
+        >
+          開始列印
+        </button>
+        <button
+          v-else
           type="button"
           class="print-btn"
           :disabled="selectedCards.length === 0 || isBusy"
           @click="printSelected"
         >
-          列印（{{ selectedCards.length }} 張）
+          {{ isBusy ? '準備中…' : `列印（${selectedCards.length} 張）` }}
         </button>
       </footer>
     </div>
@@ -227,6 +245,12 @@ async function printSelected() {
 .print-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.print-btn.ready {
+  background: #1d4ed8;
+  color: #fff;
+  border-color: #1d4ed8;
 }
 
 /* Rendered off-screen (not display:none) so images are decoded before printing. */

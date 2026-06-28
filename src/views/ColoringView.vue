@@ -41,6 +41,7 @@ interface PrintPlacement {
   heightMm: number
 }
 const printPages = ref<PrintPlacement[][]>([])
+const printReady = ref(false)
 
 const hasDirectory = ref(adapter.hasDirectory())
 const directoryName = ref(adapter.getDirectoryName())
@@ -226,9 +227,17 @@ function printScale(canvas: HTMLCanvasElement): number {
 
 async function showPrintPages(pages: PrintPlacement[][]) {
   printPages.value = pages
+  printReady.value = false
   await nextTick()
+  const imgs = document.querySelectorAll<HTMLImageElement>('.print-pages img')
+  await Promise.all(Array.from(imgs).map((img) => img.decode().catch(() => {})))
+  printReady.value = true
+}
+
+function startPrint() {
   window.print()
   printPages.value = []
+  printReady.value = false
 }
 
 async function printResult() {
@@ -322,7 +331,8 @@ async function printResult() {
 
         <section class="section">
           <h3>列印</h3>
-          <button type="button" :disabled="!store.sourceCanvas || isExporting || isPrinting" @click="printResult">列印</button>
+          <button type="button" :disabled="!store.sourceCanvas || isExporting || isPrinting || printReady" @click="printResult">列印</button>
+          <button v-if="printReady" type="button" class="start-print-btn" @click="startPrint">開始列印</button>
           <p class="note">以原圖解析度重新產生著色稿，置中列印於 A4。</p>
         </section>
       </aside>
@@ -445,6 +455,13 @@ async function printResult() {
 
 .export-btn {
   font-weight: 600;
+}
+
+.start-print-btn {
+  font-weight: 600;
+  background: #1d4ed8;
+  color: #fff;
+  border-color: #1d4ed8;
 }
 
 .dir-name,

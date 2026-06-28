@@ -51,6 +51,7 @@ function onFileChange(e: Event) {
   if (!file) return
   const reader = new FileReader()
   reader.onload = () => {
+    input.value = ''
     const dataUrl = reader.result as string
     const img = new Image()
     img.onload = () => {
@@ -63,8 +64,8 @@ function onFileChange(e: Event) {
     }
     img.src = dataUrl
   }
+  reader.onerror = () => { input.value = '' }
   reader.readAsDataURL(file)
-  input.value = ''
 }
 
 function onMaterialSelect(asset: ImageAsset) {
