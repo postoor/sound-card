@@ -47,7 +47,6 @@ interface PrintPlacement {
   heightMm: number
 }
 const printPages = ref<PrintPlacement[][]>([])
-const printReady = ref(false)
 
 const selectionItems = computed(() => {
   const counts: Record<string, number> = {}
@@ -176,18 +175,10 @@ function mainPrintScale(hollowed: HTMLCanvasElement): number {
 
 async function showPrintPages(pages: PrintPlacement[][]) {
   printPages.value = pages
-  printReady.value = false
   await nextTick()
   const imgs = document.querySelectorAll<HTMLImageElement>('.print-pages img')
   await Promise.all(Array.from(imgs).map((img) => img.decode().catch(() => {})))
-  printReady.value = true
-}
-
-function startPrint() {
-  window.addEventListener('afterprint', () => {
-    printPages.value = []
-    printReady.value = false
-  }, { once: true })
+  window.addEventListener('afterprint', () => { printPages.value = [] }, { once: true })
   window.print()
 }
 
@@ -323,10 +314,9 @@ async function printAll() {
 
         <section class="section">
           <h3>列印</h3>
-          <button type="button" :disabled="!store.sourceCanvas || isBusy || printReady" @click="printMain">列印主圖</button>
-          <button type="button" :disabled="!store.sourceCanvas || isBusy || printReady" @click="printPieces">列印零件</button>
-          <button type="button" :disabled="!store.sourceCanvas || isBusy || printReady" @click="printAll">列印主圖＋零件</button>
-          <button v-if="printReady" type="button" class="start-print-btn" @click="startPrint">開始列印</button>
+          <button type="button" :disabled="!store.sourceCanvas || isBusy" @click="printMain">列印主圖</button>
+          <button type="button" :disabled="!store.sourceCanvas || isBusy" @click="printPieces">列印零件</button>
+          <button type="button" :disabled="!store.sourceCanvas || isBusy" @click="printAll">列印主圖＋零件</button>
           <p class="note">零件以與主圖相同比例排版，剪下後可對回主圖洞口。</p>
         </section>
       </aside>
@@ -491,12 +481,6 @@ async function printAll() {
   font-weight: 600;
 }
 
-.start-print-btn {
-  font-weight: 600;
-  background: #1d4ed8;
-  color: #fff;
-  border-color: #1d4ed8;
-}
 
 .dir-name,
 .note,
